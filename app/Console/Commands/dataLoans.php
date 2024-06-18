@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\PaliServices;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,8 @@ class dataLoans extends Command
     {
         try {
 
+
+            //probando conexion
             try {
                 DB::connection('sqlsrv')->getPdo();
                 $this->info('Connection to SQL Server successful!');
@@ -71,6 +74,11 @@ class dataLoans extends Command
             // ");
 
             // dd(count($data));
+
+            $data_array = [];
+
+            $pw = (new PaliServices())->sendCredits($data_array);
+
         } catch (\Throwable $th) {
             dd('error');
         }
