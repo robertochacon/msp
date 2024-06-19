@@ -18,6 +18,19 @@ class PaliServices
             ]);
     }
 
+    public function sendClients($data)
+    {
+        try {
+            $response = $this->client->post(
+                'api/upload_clients', $data
+            )->json();
+            return $response;
+        } catch (GuzzleException|\Exception $e) {
+            Log::error($e->getMessage());
+            return ['msg' => $e->getMessage()];
+        }
+    }
+
     public function sendCredits($data)
     {
         try {
