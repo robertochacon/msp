@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Bitacora;
 use App\Services\PaliServices;
+use Illuminate\Support\Facades\DB;
 
 class dataClients extends Command
 {
@@ -84,7 +85,7 @@ class dataClients extends Command
         } catch (\Throwable $th) {
 
             $bitacora = new Bitacora();
-            $bitacora->descripcion = "Error en la carga de clientes aplicada correctamente.";
+            $bitacora->descripcion = "Error en la carga de clientes.";
             $bitacora->save();
 
             $this->info($data);

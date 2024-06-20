@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 
 class CargaManual extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+    protected static ?string $navigationIcon = 'heroicon-s-arrow-path';
 
     protected static string $view = 'filament.pages.carga-manual';
 
@@ -28,6 +28,7 @@ class CargaManual extends Page
     {
         return Action::make('Cargar clientes')
             ->requiresConfirmation()
+            ->icon('heroicon-s-arrow-path')
             ->action(function(){
 
                 try {
@@ -60,6 +61,7 @@ class CargaManual extends Page
     {
         return Action::make('Cargar creditos')
             ->requiresConfirmation()
+            ->icon('heroicon-s-arrow-path')
             ->action(function(){
 
                 try {
@@ -92,6 +94,7 @@ class CargaManual extends Page
     {
         return Action::make('Cargar movimientos')
             ->requiresConfirmation()
+            ->icon('heroicon-s-arrow-path')
             ->action(function(){
 
                 try {
