@@ -20,6 +20,8 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Swis\Filament\Backgrounds\ImageProviders\MyImages;
+use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
+use App\Filament\Pages\Settings\Settings;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -72,6 +74,10 @@ class AdminPanelProvider extends PanelProvider
                         ->directory('images/backgrounds')
                 )
                 ->showAttribution(false),
+                FilamentSettingsPlugin::make()
+                ->pages([
+                    Settings::class,
+                ])
             ]);
     }
 }
