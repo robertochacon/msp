@@ -6,11 +6,6 @@ use App\Models\Bitacora;
 use App\Services\PaliServices;
 use Exception;
 use Illuminate\Console\Command;
-<<<<<<< HEAD
-=======
-use App\Models\Bitacora;
-use App\Services\PaliServices;
->>>>>>> 15ac71e2d9a6cb7913adbd6a4befb274d56f7900
 use Illuminate\Support\Facades\DB;
 
 class dataClients extends Command
@@ -58,29 +53,16 @@ class dataClients extends Command
                     c.cod_ejecutivo,
                     c.bco_cta,
                     c.bco_nombre,
-<<<<<<< HEAD
                     (isnull((select max(tasa) from tbl_Creditos p where p.cod_cliente = c.cod_cliente),0)/12) tasa_interes,
                     (isnull( (select tasa_interes from tbl_clientes e  where e.cod_cliente = c.cod_lugartrabajo),0)/ 12  ) tasa_interes_empresa,
                     10 tasa_mora,
-=======
-                    --(c.tasa_interes / 12 ) Tasa_interes,
-                    (isnull((select max(tasa) from tbl_Creditos p where p.cod_cliente = c.cod_cliente),0)/12) tasa_interes,
-                    (isnull( (select tasa_interes from tbl_clientes e  where e.cod_cliente = c.cod_lugartrabajo),0)/ 12  ) tasa_interes_empresa,
-                    10 tasa_mora, --c.tasa_penalidad,
->>>>>>> 15ac71e2d9a6cb7913adbd6a4befb274d56f7900
                     5000 monto_minmo,
                     isnull((select max(monto) from tbl_Creditos p where p.cod_cliente = c.cod_cliente), 25000) monto_maximo,
                     1 plazo_min,
                     24 plaxo_max,
-<<<<<<< HEAD
                     15 periodo_pago,
                     15 dia_pago1,
                     30 dia_pago2,
-=======
-                    15 periodo_pago,  -- validar la fuente
-                    15 dia_pago1,  -- validar la fuente
-                    30 dia_pago2,   -- validar este campo
->>>>>>> 15ac71e2d9a6cb7913adbd6a4befb274d56f7900
                     isnull((select es_fiador from tbl_clientes e where e.cod_cliente = c.cod_lugartrabajo),'N') autorizar,
                     c.tipo_cuota tipo_cuota,
                     c.cod_frecuencia_pago_cuota  cod_frecuencia_pago
@@ -88,7 +70,6 @@ class dataClients extends Command
                 order by 1 desc
             ");
 
-<<<<<<< HEAD
             $data = 'test';
             // $data = json_encode($data);
 
@@ -104,34 +85,16 @@ class dataClients extends Command
             $bitacora->save();
 
             $this->info("Carga de clientes completa");
-=======
-            $data = json_encode($data);
-
-            $pw = (new PaliServices())->sendClients($data);
-
-            $bitacora = new Bitacora();
-            $bitacora->descripcion = "Carga de clientes aplicada correctamente.";
-            $bitacora->save();
-
-            $this->info($data);
->>>>>>> 15ac71e2d9a6cb7913adbd6a4befb274d56f7900
 
             return true;
 
         } catch (\Throwable $th) {
 
             $bitacora = new Bitacora();
-<<<<<<< HEAD
             $bitacora->descripcion = "Error en la carga de clientes aplicada correctamente.";
             $bitacora->save();
 
             $this->info("Error al cargar clientes");
-=======
-            $bitacora->descripcion = "Error en la carga de clientes.";
-            $bitacora->save();
-
-            $this->info($data);
->>>>>>> 15ac71e2d9a6cb7913adbd6a4befb274d56f7900
             return false;
         }
     }
