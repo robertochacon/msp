@@ -34,6 +34,10 @@ class BitacoraResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('descripcion')
                     ->searchable(),
+                Tables\Columns\IconColumn::make('estado')
+                    ->boolean()
+                    ->trueColor('success')
+                    ->falseColor('warning'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->since()
                     ->label('Registrado')

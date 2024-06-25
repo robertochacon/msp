@@ -10,6 +10,6 @@ class Bitacora extends Model
     use HasFactory;
 
     protected $fillable = [
-        'descripcion',
+        'descripcion','estado'
     ];
 }

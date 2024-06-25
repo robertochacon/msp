@@ -7,6 +7,7 @@ use App\Services\PaliServices;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class dataClients extends Command
 {
@@ -30,6 +31,8 @@ class dataClients extends Command
     public function handle()
     {
         try {
+
+            $ultimoRegistro = Bitacora::where('estado', true)->latest() ?? Carbon::now(); 
 
             $data = DB::connection('sqlsrv')
             ->select("
@@ -65,23 +68,24 @@ class dataClients extends Command
                     30 dia_pago2,
                     isnull((select es_fiador from tbl_clientes e where e.cod_cliente = c.cod_lugartrabajo),'N') autorizar,
                     c.tipo_cuota tipo_cuota,
-                    c.cod_frecuencia_pago_cuota  cod_frecuencia_pago
-                from tbl_clientes c
+                    c.cod_frecuencia_pago_cuota cod_frecuencia_pago
+                from tbl_clientes c where fecha_actualizacion = $ultimoRegistro->created_at
                 order by 1 desc
             ");
 
             $data = 'test';
             // $data = json_encode($data);
 
-            $paliService = new PaliServices();
-            $pw = $paliService->sendClients($data);
+            // $paliService = new PaliServices();
+            // $pw = $paliService->sendClients($data);
 
-            $this->info($pw);
+            $this->info($data);
             return true;
 
 
             $bitacora = new Bitacora();
             $bitacora->descripcion = "Carga de clientes completa.";
+            $bitacora->estado = true;
             $bitacora->save();
 
             $this->info("Carga de clientes completa");
@@ -91,7 +95,8 @@ class dataClients extends Command
         } catch (\Throwable $th) {
 
             $bitacora = new Bitacora();
-            $bitacora->descripcion = "Error en la carga de clientes aplicada correctamente.";
+            $bitacora->descripcion = "Error en la carga de clientes.";
+            $bitacora->estado = false;
             $bitacora->save();
 
             $this->info("Error al cargar clientes");

@@ -76,6 +76,7 @@ class dataLoans extends Command
 
             $bitacora = new Bitacora();
             $bitacora->descripcion = "Error en la carga de creditos.";
+            $bitacora->estado = false;
             $bitacora->save();
 
             $this->info($data);
