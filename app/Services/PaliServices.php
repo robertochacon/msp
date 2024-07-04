@@ -5,6 +5,7 @@ namespace App\Services;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Models\Bitacora;
 
 class PaliServices
 {
@@ -22,12 +23,24 @@ class PaliServices
     {
         try {
             $response = $this->client->post(
-                'api/upload_clients', $data
+                '/api/upload_clients', json_encode(["data"=>$data])
             )->json();
-            return $response;
+
+            $bitacora = new Bitacora();
+            $bitacora->descripcion = "Response:".json_encode($response);
+            $bitacora->estado = true;
+            $bitacora->save();
+
+            // return $response;
         } catch (GuzzleException|\Exception $e) {
             Log::error($e->getMessage());
-            return ['msg' => $e->getMessage()];
+
+            $bitacora = new Bitacora();
+            $bitacora->descripcion = "erro service:".$e->getMessage();
+            $bitacora->estado = false;
+            $bitacora->save();
+
+            // return ['msg' => $e->getMessage()];
         }
     }
 
