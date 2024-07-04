@@ -5,7 +5,6 @@ namespace App\Services;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Models\Bitacora;
 
 class PaliServices
 {
@@ -25,22 +24,10 @@ class PaliServices
             $response = $this->client->post(
                 '/api/upload_clients', json_encode(["data"=>$data])
             )->json();
-
-            $bitacora = new Bitacora();
-            $bitacora->descripcion = "Response:".json_encode($response);
-            $bitacora->estado = true;
-            $bitacora->save();
-
-            // return $response;
+            return $response;
         } catch (GuzzleException|\Exception $e) {
             Log::error($e->getMessage());
-
-            $bitacora = new Bitacora();
-            $bitacora->descripcion = "erro service:".$e->getMessage();
-            $bitacora->estado = false;
-            $bitacora->save();
-
-            // return ['msg' => $e->getMessage()];
+            return ['msg' => $e->getMessage()];
         }
     }
 
@@ -48,7 +35,20 @@ class PaliServices
     {
         try {
             $response = $this->client->post(
-                'api/upload_data', $data
+                '/api//api/upload_loans', json_encode(["data"=>$data])
+            )->json();
+            return $response;
+        } catch (GuzzleException|\Exception $e) {
+            Log::error($e->getMessage());
+            return ['msg' => $e->getMessage()];
+        }
+    }
+
+    public function sendCreditsMovements($data)
+    {
+        try {
+            $response = $this->client->post(
+                '/api/upload_movements', json_encode(["data"=>$data])
             )->json();
             return $response;
         } catch (GuzzleException|\Exception $e) {

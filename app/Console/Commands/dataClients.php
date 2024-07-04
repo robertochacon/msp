@@ -30,14 +30,11 @@ class dataClients extends Command
      */
     public function handle()
     {
-        // try {
+        try {
 
             $ultimoRegistro = Bitacora::where('estado', true)->latest()->first();
 
             $fecha = $ultimoRegistro ? $ultimoRegistro->created_at : Carbon::now();
-
-            // $this->info($fecha);
-            // return true;
 
             // $data = DB::connection('sqlsrv')
             // ->select("
@@ -127,7 +124,7 @@ class dataClients extends Command
                             FROM tbl_clientes e 
                             WHERE e.cod_cliente = c.cod_lugartrabajo), 0) / 12) AS tasa_interes_empresa,
                     10 AS tasa_penalidad,
-                    6000 AS monto_minimo,
+                    5000 AS monto_minimo,
                     ISNULL((SELECT MAX(monto) 
                             FROM tbl_Creditos p 
                             WHERE p.cod_cliente = c.cod_cliente), 25000) AS monto_maximo,
@@ -135,19 +132,16 @@ class dataClients extends Command
                     24 AS plazo_maximo,
                     15 AS periodo_cuota,
                     15 AS dia_pago1,
-                    20 AS dia_pago2,
+                    30 AS dia_pago2,
                     ISNULL((SELECT es_fiador 
                             FROM tbl_clientes e 
                             WHERE e.cod_cliente = c.cod_lugartrabajo), 'N') AS autorizar,
                     c.tipo_cuota AS tipo_cuota,
                     c.cod_frecuencia_pago_cuota AS cod_frecuencia_pago
                 FROM tbl_clientes c 
-                WHERE c.fecha_actualizacion IS NOT NULL
+                WHERE c.fecha_actualizacion > ?
                 ORDER BY 1 DESC
-            ");
-
-            // $this->info($data->toArray());
-            // return;
+            ",[$fecha]);
 
             $paliService = new PaliServices();
 
@@ -157,23 +151,24 @@ class dataClients extends Command
             }
 
             $bitacora = new Bitacora();
-            $bitacora->descripcion = "Carga de clientes completa.";
+            $bitacora->descripcion = "Carga de clientes completa. ".count($data)." clientes tuvieron efecto.";
             $bitacora->estado = true;
             $bitacora->save();
 
-            $this->info("Carga de clientes completa");
+            // $this->info(json_enconde($data));
+            $this->info("Carga de clientes completa.");
 
             return true;
 
-        // } catch (\Throwable $th) {
+        } catch (\Throwable $th) {
 
-        //     $bitacora = new Bitacora();
-        //     $bitacora->descripcion = "Error en la carga de clientes.";
-        //     $bitacora->estado = false;
-        //     $bitacora->save();
+            $bitacora = new Bitacora();
+            $bitacora->descripcion = "Error en la carga de clientes.";
+            $bitacora->estado = false;
+            $bitacora->save();
 
-        //     $this->info("Error al cargar clientes {$th}");
-        //     return false;
-        // }
+            $this->info("Error al cargar clientes {$th}");
+            return false;
+        }
     }
 }
