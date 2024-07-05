@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('bitacoras', function (Blueprint $table) {
             $table->id();
             $table->string('descripcion');
+            $table->enum('tipo', ['Cliente', 'Credito', 'Movimiento'])->default('cliente');
             $table->boolean('estado');
             $table->timestamps();
         });

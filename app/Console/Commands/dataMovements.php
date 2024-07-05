@@ -33,7 +33,7 @@ class dataMovements extends Command
     {
         try {
 
-            $ultimoRegistro = Bitacora::where('estado', true)->latest()->first();
+            $ultimoRegistro = Bitacora::where('tipo', 'Movimiento')->where('estado', true)->latest()->first();
             $fecha = $ultimoRegistro ? $ultimoRegistro->created_at : Carbon::now();
 
             $data = new LocalDataQuerys();
@@ -48,6 +48,7 @@ class dataMovements extends Command
 
             $bitacora = new Bitacora();
             $bitacora->descripcion = "Carga de movimientos completa. ".count($data)." movimientos tuvieron efecto.";
+            $bitacora->tipo = "Movimiento";
             $bitacora->estado = true;
             $bitacora->created_at = date('Y-m-d H:i:s');
             $bitacora->save();
@@ -60,6 +61,7 @@ class dataMovements extends Command
 
             $bitacora = new Bitacora();
             $bitacora->descripcion = "Error en la carga de movimientos.";
+            $bitacora->tipo = "Movimiento";
             $bitacora->estado = false;
             $bitacora->created_at = date('Y-m-d H:i:s');
             $bitacora->save();

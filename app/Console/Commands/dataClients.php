@@ -33,7 +33,7 @@ class dataClients extends Command
     {
         try {
 
-            $ultimoRegistro = Bitacora::where('estado', true)->latest()->first();
+            $ultimoRegistro = Bitacora::where('tipo', 'Cliente')->where('estado', true)->latest()->first();
             $fecha = $ultimoRegistro ? $ultimoRegistro->created_at : Carbon::now();
 
             $data = new LocalDataQuerys();
@@ -48,6 +48,7 @@ class dataClients extends Command
 
             $bitacora = new Bitacora();
             $bitacora->descripcion = "Carga de clientes completa. ".count($data)." clientes tuvieron efecto.";
+            $bitacora->tipo = "Cliente";
             $bitacora->estado = true;
             $bitacora->created_at = date('Y-m-d H:i:s');
             $bitacora->save();
@@ -60,6 +61,7 @@ class dataClients extends Command
 
             $bitacora = new Bitacora();
             $bitacora->descripcion = "Error en la carga de clientes.";
+            $bitacora->tipo = "Cliente";
             $bitacora->estado = false;
             $bitacora->created_at = date('Y-m-d H:i:s');
             $bitacora->save();
