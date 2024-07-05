@@ -43,14 +43,15 @@ class dataClients extends Command
             foreach ($data as $client) {
                 $clientData = json_encode($client);
                 $pw = $paliService->sendClients($client);
+                $this->info(json_encode($pw));
             }
 
             $bitacora = new Bitacora();
             $bitacora->descripcion = "Carga de clientes completa. ".count($data)." clientes tuvieron efecto.";
             $bitacora->estado = true;
+            $bitacora->created_at = date('Y-m-d H:i:s');
             $bitacora->save();
 
-            // $this->info(json_enconde($data));
             $this->info("Carga de clientes completa.");
 
             return true;
@@ -60,6 +61,7 @@ class dataClients extends Command
             $bitacora = new Bitacora();
             $bitacora->descripcion = "Error en la carga de clientes.";
             $bitacora->estado = false;
+            $bitacora->created_at = date('Y-m-d H:i:s');
             $bitacora->save();
 
             $this->info("Error al cargar clientes {$th}");

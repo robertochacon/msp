@@ -39,7 +39,6 @@ class BitacoraResource extends Resource
                     ->trueColor('success')
                     ->falseColor('warning'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->since()
                     ->label('Registrado')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')

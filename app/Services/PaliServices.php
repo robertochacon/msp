@@ -22,7 +22,7 @@ class PaliServices
     {
         try {
             $response = $this->client->post(
-                '/api/upload_clients', json_encode(["data"=>$data])
+                '/api/upload_clients', ["data"=>$data]
             )->json();
             return $response;
         } catch (GuzzleException|\Exception $e) {
@@ -35,7 +35,7 @@ class PaliServices
     {
         try {
             $response = $this->client->post(
-                '/api//api/upload_loans', json_encode(["data"=>$data])
+                '/api//api/upload_loans', ["data"=>$data]
             )->json();
             return $response;
         } catch (GuzzleException|\Exception $e) {
@@ -48,7 +48,7 @@ class PaliServices
     {
         try {
             $response = $this->client->post(
-                '/api/upload_movements', json_encode(["data"=>$data])
+                '/api/upload_movements', ["data"=>$data]
             )->json();
             return $response;
         } catch (GuzzleException|\Exception $e) {
