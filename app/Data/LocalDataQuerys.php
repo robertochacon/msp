@@ -82,4 +82,54 @@ class LocalDataQuerys {
 
     }
 
+    public static function movements($fecha){
+
+        return DB::connection('sqlsrv')
+        ->select("
+            select
+                m.no_credito as no_credito,
+                m.num_recibo as recibo,
+                max(m.fecha) as fecha,
+                sum(isnull(m.monto_movimiento, 0)) as monto,
+
+                (select isnull(sum(d.Capital_aplicado), 0) 
+                from tbl_creditos_mov_desglose_pagos d
+                where m.no_credito = d.credito and m.num_recibo = d.recibo) as capital,
+                
+                (select isnull(sum(d.interes_aplicado), 0) 
+                from tbl_creditos_mov_desglose_pagos d
+                where m.no_credito = d.credito and m.num_recibo = d.recibo) as interes,
+                
+                (select isnull(sum(d.mora_aplicada), 0) 
+                from tbl_creditos_mov_desglose_pagos d
+                where m.no_credito = d.credito and m.num_recibo = d.recibo) as mora,
+                
+                (select isnull(sum(d.comision_aplicada), 0) 
+                from tbl_creditos_mov_desglose_pagos d
+                where m.no_credito = d.credito and m.num_recibo = d.recibo) as comision,
+                
+                max(m.comentario) as comentario,
+                
+                (select min(d.no_cuota) 
+                from tbl_creditos_mov_desglose_pagos d
+                where m.no_credito = d.credito and m.num_recibo = d.recibo) as cuota,
+                
+                isnull((select max(d.capital_anterior) 
+                        from tbl_creditos_mov_desglose_pagos d
+                        where m.no_credito = d.credito and m.num_recibo = d.recibo), 0) as capital_anterior,
+                        
+                max(m.usuario) as usuario
+                
+            from tbl_creditos_movimientos m 
+            where m.monto_movimiento > 0
+            and m.num_recibo is not null
+            and m.tipo_movi in ('4', '5', '6', '9')
+            and m.fecha > ?
+            and m.fecha_actualizacion > ?
+            group by m.no_credito, m.num_recibo 
+            order by fecha desc
+        ",[$fecha,$fecha]);
+
+    }
+
 }
