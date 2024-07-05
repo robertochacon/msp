@@ -36,12 +36,12 @@ class dataClients extends Command
             $ultimoRegistro = Bitacora::where('estado', true)->latest()->first();
             $fecha = $ultimoRegistro ? $ultimoRegistro->created_at : Carbon::now();
 
-            $data = LocalDataQuerys::clients($fecha);
+            $data = new LocalDataQuerys();
+            $data = $data->clients($fecha);
 
             $paliService = new PaliServices();
 
             foreach ($data as $client) {
-                $clientData = json_encode($client);
                 $pw = $paliService->sendClients($client);
                 $this->info(json_encode($pw));
             }

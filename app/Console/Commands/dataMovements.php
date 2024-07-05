@@ -36,12 +36,12 @@ class dataMovements extends Command
             $ultimoRegistro = Bitacora::where('estado', true)->latest()->first();
             $fecha = $ultimoRegistro ? $ultimoRegistro->created_at : Carbon::now();
 
-            $data = LocalDataQuerys::movements($fecha);
+            $data = new LocalDataQuerys();
+            $data = $data->movements($fecha);
 
             $paliService = new PaliServices();
 
             foreach ($data as $movement) {
-                $movementData = json_encode($movement);
                 $pw = $paliService->sendCreditsMovements($movement);
                 $this->info(json_encode($pw));
             }

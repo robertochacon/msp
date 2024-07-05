@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\DB;
 
 class LocalDataQuerys {
 
-    public static function clients($fecha){
+    protected $connection;
 
-        return DB::connection('sqlsrv')
-        ->select("
+    public function __construct() {
+        $this->connection = DB::connection('sqlsrv');
+    }
+
+    public function clients($fecha){
+
+        return $this->connection->select("
             SELECT
                 c.cod_cliente AS id,
                 'X' + c.identificacion AS cedula,
@@ -82,13 +87,12 @@ class LocalDataQuerys {
 
     }
 
-    public static function movements($fecha){
+    public function movements($fecha){
 
-        return DB::connection('sqlsrv')
-        ->select("
+        return $this->connection->select("
             select
-                m.no_credito as no_credito,
-                m.num_recibo as recibo,
+                m.no_credito,
+                m.num_recibo,
                 max(m.fecha) as fecha,
                 sum(isnull(m.monto_movimiento, 0)) as monto,
 
@@ -124,11 +128,10 @@ class LocalDataQuerys {
             where m.monto_movimiento > 0
             and m.num_recibo is not null
             and m.tipo_movi in ('4', '5', '6', '9')
-            and m.fecha > ?
             and m.fecha_actualizacion > ?
             group by m.no_credito, m.num_recibo 
             order by fecha desc
-        ",[$fecha,$fecha]);
+        ",[$fecha]);
 
     }
 
