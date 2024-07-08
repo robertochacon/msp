@@ -38,10 +38,12 @@ class dataMovements extends Command
 
             $data = new LocalDataQuerys();
             $data = $data->movements($fecha);
+            $codigos = [];
 
             $paliService = new PaliServices();
 
             foreach ($data as $movement) {
+                array_push($codigos, ['codigo'=>$movement->num_recibo]);
                 $pw = $paliService->sendCreditsMovements($movement);
                 $this->info(json_encode($pw));
             }
@@ -50,6 +52,7 @@ class dataMovements extends Command
             $bitacora->descripcion = "Carga de movimientos completa. ".count($data)." movimientos tuvieron efecto.";
             $bitacora->tipo = "Movimiento";
             $bitacora->estado = true;
+            $bitacora->codes = $codigos;
             $bitacora->created_at = date('Y-m-d H:i:s');
             $bitacora->save();
 

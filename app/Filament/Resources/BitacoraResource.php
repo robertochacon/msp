@@ -24,7 +24,14 @@ class BitacoraResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('descripcion')
+                    ->columnSpanFull()
                     ->required(),
+                Forms\Components\Repeater::make('codes')
+                    ->label('Codigos')
+                    ->schema([
+                        Forms\Components\TextInput::make('codigo'),
+                    ])
+                    ->grid(3)
             ]);
     }
 
@@ -53,6 +60,7 @@ class BitacoraResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -74,6 +82,7 @@ class BitacoraResource extends Resource
         return [
             'index' => Pages\ListBitacoras::route('/'),
             'create' => Pages\CreateBitacora::route('/create'),
+            'view' => Pages\ViewBitacora::route('/{record}'),
             'edit' => Pages\EditBitacora::route('/{record}/edit'),
         ];
     }

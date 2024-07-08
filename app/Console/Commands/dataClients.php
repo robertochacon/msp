@@ -38,10 +38,12 @@ class dataClients extends Command
 
             $data = new LocalDataQuerys();
             $data = $data->clients($fecha);
+            $codigos = [];
 
             $paliService = new PaliServices();
 
             foreach ($data as $client) {
+                array_push($codigos, ['codigo'=>$client->id]);
                 $pw = $paliService->sendClients($client);
                 $this->info(json_encode($pw));
             }
@@ -50,6 +52,7 @@ class dataClients extends Command
             $bitacora->descripcion = "Carga de clientes completa. ".count($data)." clientes tuvieron efecto.";
             $bitacora->tipo = "Cliente";
             $bitacora->estado = true;
+            $bitacora->codes = $codigos;
             $bitacora->created_at = date('Y-m-d H:i:s');
             $bitacora->save();
 

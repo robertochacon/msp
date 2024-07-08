@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('descripcion');
             $table->enum('tipo', ['Cliente', 'Credito', 'Movimiento'])->default('cliente');
             $table->boolean('estado');
+            $table->json('codes')->nullable();
             $table->timestamps();
         });
     }
