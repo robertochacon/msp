@@ -4,7 +4,9 @@ namespace App\Filament\Pages\Settings;
  
 use Closure;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Pages\Actions\ButtonAction;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
  
@@ -17,9 +19,14 @@ class Settings extends BaseSettings
                 ->schema([
                     Tabs\Tab::make('General')
                         ->schema([
-                            TextInput::make('general.tiempo_de_ejecucion_del_job')
-                                ->numeric()
-                                ->required(),
+                            Section::make('Configuracion del job')
+                            ->description('Aqui puedes modificar los parametos y ejecucion del job para la carga automatica')
+                            ->schema([
+                                TextInput::make('general.tiempo_de_ejecucion_del_job')
+                                    ->numeric()
+                                    ->required(),
+                                Toggle::make('general.estado_del_job'),
+                            ]),
                         ]),
                 ]),
         ];
