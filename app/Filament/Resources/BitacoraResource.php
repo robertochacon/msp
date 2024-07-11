@@ -31,7 +31,8 @@ class BitacoraResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('codigo'),
                     ])
-                    ->grid(3)
+                    ->columnSpanFull()
+                    ->grid(6)
             ]);
     }
 
