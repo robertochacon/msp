@@ -87,6 +87,37 @@ class LocalDataQuerys {
 
     }
 
+    public function loans($num_credito){
+
+        return $this->connection->select("
+            select
+            c.cod_cliente as client_id,
+            c.num_credito as num_credito,
+            'RD$' as moneda,
+            c.monto as monto_aprobado,
+            c.monto as monto_desembolsado,
+            (c.monto - (select sum(p.capital) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito)) as monto_pagado,
+            (select Max(n.cuota) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P' ) as monto_cuota,
+            c.estado as estado,
+            c.fecha_aprobado as fecha_desembolso,
+            (select Max(m.fecha) from tbl_Creditos_movimientos m where c.num_credito = m.no_credito and m.tipo_movi in (4, 5)) as fecha_ult_pago,
+            (select Min(n.fecha_cuota) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P' ) as fecha_prox_pago,
+            'PRESTAMOS PERSONALES' as tipo_credito,
+            cuotas as cantidad_cuota,
+            (select count(*) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito and p.estado = 'C') as cuotas_pagadas,
+            periodo_pago as periodo_pago,
+            isnull((select isnull(sum(isnull(p.capital,0) + isnull(p.interes,0) + isnull(p.comision,0) + isnull(p.mora,0)),0)
+                from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito and p.estado = 'P'),0) as saldo_pagar,
+            (select isnull(sum(isnull(p.capital,0)),0) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito and p.estado = 'P') as capital_no_vencido,
+            isnull((select Max(n.interes) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P' ),0) as interes_cuota,
+            isnull((select Max(n.comision) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P'),0 ) as seguro_cuota,                                        
+            c.destino_fondos as proposito
+            from tbl_creditos c
+            where fecha_aprobado is not null and num_credito = ?
+        ",[$num_credito]);
+
+    }
+
     public function movements($fecha){
 
         return $this->connection->select("
@@ -122,7 +153,7 @@ class LocalDataQuerys {
                         from tbl_creditos_mov_desglose_pagos d
                         where m.no_credito = d.credito and m.num_recibo = d.recibo), 0) as capital_anterior,
                         
-                max(m.usuario) as usuario
+                max(m.usuario) as usuario,
                 
             from tbl_creditos_movimientos m 
             where m.monto_movimiento > 0
