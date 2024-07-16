@@ -3,10 +3,12 @@
 namespace App\Console\Commands;
 
 use App\Models\Bitacora;
+use App\Data\LocalDataQuerys;
 use App\Services\PaliServices;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class dataLoans extends Command
 {
@@ -31,57 +33,46 @@ class dataLoans extends Command
     {
         try {
 
-            $data = DB::connection('sqlsrv')
-            ->select("
-            select
-                c.cod_cliente,
-                c.num_credito,
-                'RD$',
-                c.monto,
-                c.monto,
-                (c.monto - (select sum(p.capital) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito)) monto_pagado,
-                (select Max(n.cuota) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P' ) monto_cuota,
-                c.estado,
-                c.fecha_aprobado,
-                (select Max(m.fecha) from tbl_Creditos_movimientos m where c.num_credito = m.no_credito and m.tipo_movi in (4, 5)) fecha_ult_pago,
-                (select Min(n.fecha_cuota) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P' ) fecha_prox_pago,
-                'PRESTAMOS PERSONALES',
-                cuotas,
-                (select count(*) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito
-                                                        and p.estado = 'C') cuotas_pagadas,
-                periodo_pago,
-                isnull((select isnull(sum(isnull(p.capital,0) + isnull(p.interes,0) + isnull(p.comision,0) + isnull(p.mora,0)),0)
-                    from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito
-                                                        and p.estado = 'P' and p.fecha_cuota < '2024-06-19'),0) saldo_pagar,
-                (select isnull(sum(isnull(p.capital,0)),0) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito
-                                                        and p.estado = 'P' and p.fecha_cuota > '2024-06-18') capital_no_vencido,
-                isnull((select Max(n.interes) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P' ),0) interes_cuota,
-                isnull((select Max(n.comision) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P'),0 ) comision_cuota,
-                c.destino_fondos
-            from tbl_creditos c
-            where fecha_aprobado is not null
-            order by 2 desc
-            ");
+            $ultimoRegistro = Bitacora::where('tipo', 'Credito')->where('estado', true)->latest()->first();
+            $fecha = $ultimoRegistro ? $ultimoRegistro->created_at : Carbon::now();
 
-            $data = json_encode($data);
-            // echo $data;
-            $this->info($data);
+            $data = new LocalDataQuerys();
+            $data_movements = $data->loans_movements($fecha);
+            $codigos = [];
+
+            $paliService = new PaliServices();
+
+            foreach ($data_movements as $movement) {
+                array_push($codigos, ['codigo'=>$movement->no_credito]);
+
+                $loan = $data->loans($movement->no_credito);
+                $pw = $paliService->sendCredits($loan);
+                $this->info(json_encode($pw));
+            }
+
+            $bitacora = new Bitacora();
+            $bitacora->descripcion = "Carga de creditos completa. ".count($codigos)." creditos tuvieron efecto.";
+            $bitacora->tipo = "Credito";
+            $bitacora->estado = true;
+            $bitacora->codes = $codigos;
+            $bitacora->created_at = date('Y-m-d H:i:s');
+            $bitacora->save();
+
+            $this->info("Carga de creditos completa.");
+
             return 0;
-
-            //$data_array = [];
-
-            //$pw = (new PaliServices())->sendCredits($data_array);
 
         } catch (\Throwable $th) {
 
             $bitacora = new Bitacora();
             $bitacora->descripcion = "Error en la carga de creditos.";
+            $bitacora->tipo = "Credito";
             $bitacora->estado = false;
+            $bitacora->created_at = date('Y-m-d H:i:s');
             $bitacora->save();
 
-            $this->info($data);
-            return false;
-
+            $this->info("Error al cargar movimientos {$th}");
+            return 1;
         }
     }
 }

@@ -13,6 +13,6 @@ return [
      */
     'cache_key' => 'settings_',
 
-    'general.tiempo_de_ejecucion_del_job' => '1440',
     'general.estado_del_job' => false,
+    'general.tiempo_de_ejecucion_del_job' => '10:00',
 ];

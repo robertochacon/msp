@@ -35,7 +35,7 @@ class PaliServices
     {
         try {
             $response = $this->client->post(
-                '/api//api/upload_loans', ["data"=>$data]
+                '/api/upload_loans', ["data"=>$data]
             )->json();
             return $response;
         } catch (GuzzleException|\Exception $e) {

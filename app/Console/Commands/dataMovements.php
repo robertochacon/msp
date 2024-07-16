@@ -58,7 +58,7 @@ class dataMovements extends Command
 
             $this->info("Carga de movimientos completa.");
 
-            return true;
+            return 0;
 
         } catch (\Throwable $th) {
 
@@ -70,7 +70,7 @@ class dataMovements extends Command
             $bitacora->save();
 
             $this->info("Error al cargar movimientos {$th}");
-            return false;
+            return 1;
         }
     }
 }

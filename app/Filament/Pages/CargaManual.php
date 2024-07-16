@@ -57,7 +57,7 @@ class CargaManual extends Page
     
                     try {
  
-                        Artisan::call('app:data-crdits');
+                        Artisan::call('app:data-loans');
     
                         Notification::make()
                         ->title('Carga completa.')

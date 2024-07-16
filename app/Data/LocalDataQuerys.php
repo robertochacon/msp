@@ -89,7 +89,7 @@ class LocalDataQuerys {
 
     public function loans($num_credito){
 
-        return $this->connection->select("
+        return $this->connection->selectOne("
             select
             c.cod_cliente as client_id,
             c.num_credito as num_credito,
@@ -115,6 +115,21 @@ class LocalDataQuerys {
             from tbl_creditos c
             where fecha_aprobado is not null and num_credito = ?
         ",[$num_credito]);
+
+    }
+
+    public function loans_movements($fecha){
+
+        return $this->connection->select("
+            select
+                m.no_credito
+            from tbl_creditos_movimientos m 
+            where m.monto_movimiento > 0
+            and m.num_recibo is not null
+            and m.tipo_movi in ('4', '5', '6', '9')
+            and m.fecha_actualizacion > ?
+            group by m.no_credito, m.num_recibo
+        ",[$fecha]);
 
     }
 
@@ -153,7 +168,7 @@ class LocalDataQuerys {
                         from tbl_creditos_mov_desglose_pagos d
                         where m.no_credito = d.credito and m.num_recibo = d.recibo), 0) as capital_anterior,
                         
-                max(m.usuario) as usuario,
+                max(m.usuario) as usuario
                 
             from tbl_creditos_movimientos m 
             where m.monto_movimiento > 0

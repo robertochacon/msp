@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Bitacora;
+use App\Models\Settings;
 use App\Data\LocalDataQuerys;
 use App\Services\PaliServices;
 use Exception;
@@ -58,7 +59,7 @@ class dataClients extends Command
 
             $this->info("Carga de clientes completa.");
 
-            return true;
+            return 0;
 
         } catch (\Throwable $th) {
 
@@ -70,7 +71,7 @@ class dataClients extends Command
             $bitacora->save();
 
             $this->info("Error al cargar clientes {$th}");
-            return false;
+            return 1;
         }
     }
 }
