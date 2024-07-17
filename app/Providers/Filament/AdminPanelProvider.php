@@ -50,7 +50,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 NavigationItem::make('Ir a pali web')
-                    ->url('https://palitest.com.do', shouldOpenInNewTab: true)
+                    ->url(env("BASE_URL_PALI"), shouldOpenInNewTab: true)
                     ->icon('heroicon-o-link')
             ])
             ->middleware([

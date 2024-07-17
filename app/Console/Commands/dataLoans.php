@@ -43,11 +43,14 @@ class dataLoans extends Command
             $paliService = new PaliServices();
 
             foreach ($data_movements as $movement) {
-                array_push($codigos, ['codigo'=>$movement->no_credito]);
-
-                $loan = $data->loans($movement->no_credito);
-                $pw = $paliService->sendCredits($loan);
-                $this->info(json_encode($pw));
+                $codigo_values = array_column($codigos, 'codigo');
+                if (!in_array($movement->no_credito, $codigo_values)) {
+                    $codigos[] = ['codigo' => $movement->no_credito];
+            
+                    $loan = $data->loans($movement->no_credito);
+                    $pw = $paliService->sendCredits($loan);
+                    $this->info(json_encode($pw));
+                }
             }
 
             $bitacora = new Bitacora();
