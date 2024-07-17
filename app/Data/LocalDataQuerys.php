@@ -156,9 +156,9 @@ class LocalDataQuerys {
                 
                 (select isnull(sum(d.comision_aplicada), 0) 
                 from tbl_creditos_mov_desglose_pagos d
-                where m.no_credito = d.credito and m.num_recibo = d.recibo) as comision,
+                where m.no_credito = d.credito and m.num_recibo = d.recibo) as otros,
                 
-                max(m.comentario) as comentario,
+                max(m.comentario) as descripcion,
                 
                 (select min(d.no_cuota) 
                 from tbl_creditos_mov_desglose_pagos d
