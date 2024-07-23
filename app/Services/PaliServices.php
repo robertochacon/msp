@@ -18,6 +18,17 @@ class PaliServices
             ]);
     }
 
+    public function getClient($id)
+    {
+        try {
+            $response = $this->client->get('/api/get_client/'.$id);
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (GuzzleException|\Exception $e) {
+            Log::error($e->getMessage());
+            return ['msg' => $e->getMessage()];
+        }
+    }
+
     public function sendClients($data)
     {
         try {

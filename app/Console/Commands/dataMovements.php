@@ -43,8 +43,9 @@ class dataMovements extends Command
             $paliService = new PaliServices();
 
             foreach ($data as $movement) {
-                array_push($codigos, ['codigo'=>$movement->num_recibo]);
+                // array_push($codigos, ['codigo'=>$movement->num_recibo]);
                 $pw = $paliService->sendCreditsMovements($movement);
+                array_push($codigos, ['codigo'=>$pw['data'], 'estado'=>$pw["status"], 'cambios'=>null]);
                 $this->info(json_encode($pw));
             }
 

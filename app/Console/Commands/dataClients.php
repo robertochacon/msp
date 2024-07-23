@@ -44,8 +44,21 @@ class dataClients extends Command
             $paliService = new PaliServices();
 
             foreach ($data as $client) {
-                array_push($codigos, ['codigo'=>$client->id]);
+
+                $client_pw = $paliService->getClient($client->id);
+
+                $changes = [];
+
+                if ($client_pw["status"]) {
+                    foreach ($client as $key => $value) {
+                        if ($key !== 'fecha_registro' && array_key_exists($key, $client_pw["data"]) && $client_pw["data"][$key] != $value) {
+                            $changes[$key] = $client_pw["data"][$key] ." - ".$value;
+                        }
+                    }
+                }
+
                 $pw = $paliService->sendClients($client);
+                array_push($codigos, ['codigo'=>$pw['data'], 'estado'=>$pw["status"], 'cambios'=>$changes]);
                 $this->info(json_encode($pw));
             }
 

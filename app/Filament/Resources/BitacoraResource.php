@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Get;
 
 class BitacoraResource extends Resource
 {
@@ -27,12 +28,19 @@ class BitacoraResource extends Resource
                     ->columnSpanFull()
                     ->required(),
                 Forms\Components\Repeater::make('codes')
-                    ->label('Codigos')
+                    ->label('Registros')
                     ->schema([
-                        Forms\Components\TextInput::make('codigo'),
+                        Forms\Components\TextInput::make('codigo')->label("Mensaje"),
+                        Forms\Components\Toggle::make('estado')
+                        ->onColor('success')
+                        ->offColor('warning'),
+                        Forms\Components\Hidden::make('tipo'),
+                        Forms\Components\KeyValue::make('cambios')
+                        ->hidden(fn (Get $get): bool => $get('tipo') != 'client')
+                        // Forms\Components\MarkdownEditor::make('codigo')
                     ])
                     ->columnSpanFull()
-                    ->grid(6)
+                    ->grid(1)
             ]);
     }
 
