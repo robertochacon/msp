@@ -121,14 +121,17 @@ class LocalDataQuerys {
     public function loans_movements($fecha){
 
         return $this->connection->select("
-            select
-                m.no_credito
-            from tbl_creditos_movimientos m 
-            where m.monto_movimiento > 0
-            and m.num_recibo is not null
-            and m.tipo_movi in ('4', '5', '6', '9')
-            and m.fecha_actualizacion > ?
-            group by m.no_credito, m.num_recibo
+            select m.no_credito
+            from (
+                select
+                    m.no_credito
+                from tbl_creditos_movimientos m 
+                where m.monto_movimiento > 0
+                and m.num_recibo is not null
+                and m.tipo_movi in ('2','4', '5', '6', '9')
+                and m.fecha_actualizacion > ?
+                group by m.no_credito, m.num_recibo ) m
+            group by m.no_credito
         ",[$fecha]);
 
     }
