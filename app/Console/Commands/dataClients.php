@@ -40,6 +40,8 @@ class dataClients extends Command
             $data = new LocalDataQuerys();
             $data = $data->clients($fecha);
             $codigos = [];
+            $total_success = 0;
+            $total_fails = 0;
 
             $paliService = new PaliServices();
 
@@ -48,6 +50,10 @@ class dataClients extends Command
                 $client_pw = $paliService->getClient($client->id);
 
                 $changes = [];
+
+                if ($client_pw == null) {
+                    continue;
+                }
 
                 if ($client_pw["status"]) {
                     foreach ($client as $key => $value) {
@@ -58,11 +64,20 @@ class dataClients extends Command
                 }
 
                 $pw = $paliService->sendClients($client);
+
+                if ($pw["status"]) {
+                    $total_success = $total_success+1;
+                }else{
+                    $total_fails = $total_fails+1;
+                }
+
                 array_push($codigos, ['codigo'=>$pw['data'], 'estado'=>$pw["status"], 'cambios'=>$changes]);
                 $this->info(json_encode($pw));
             }
 
             $bitacora = new Bitacora();
+            $bitacora->total_completados = $total_success;
+            $bitacora->total_fallidos = $total_fails;
             $bitacora->descripcion = "Carga de clientes completa. ".count($data)." clientes tuvieron efecto.";
             $bitacora->tipo = "Cliente";
             $bitacora->estado = true;

@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('bitacoras', function (Blueprint $table) {
             $table->id();
-            $table->string('descripcion');
-            $table->enum('tipo', ['Cliente', 'Credito', 'Movimiento'])->default('cliente');
+            $table->integer('total_completados')->default(0)->nullable();
+            $table->integer('total_fallidos')->default(0)->nullable();
+            $table->string('descripcion')->nullable();;
+            $table->enum('tipo', ['Cliente', 'Credito', 'Movimiento'])->default('Cliente');
             $table->boolean('estado');
             $table->json('codes')->nullable();
             $table->timestamps();

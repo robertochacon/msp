@@ -39,6 +39,8 @@ class dataLoans extends Command
             $data = new LocalDataQuerys();
             $data_movements = $data->loans_movements($fecha);
             $codigos = [];
+            $total_success = 0;
+            $total_fails = 0;
 
             $paliService = new PaliServices();
 
@@ -46,12 +48,21 @@ class dataLoans extends Command
 
                 $loan = $data->loans($movement->no_credito);
                 $pw = $paliService->sendCredits($loan);
+
+                if ($pw["status"]) {
+                    $total_success = $total_success+1;
+                }else{
+                    $total_fails = $total_fails+1;
+                }
+
                 array_push($codigos, ['codigo'=>$pw['data'], 'estado'=>$pw["status"], 'cambios'=>null]);
                 $this->info(json_encode($pw));
-                
+
             }
 
             $bitacora = new Bitacora();
+            $bitacora->total_completados = $total_success;
+            $bitacora->total_fallidos = $total_fails;
             $bitacora->descripcion = "Carga de creditos completa. ".count($codigos)." creditos tuvieron efecto.";
             $bitacora->tipo = "Credito";
             $bitacora->estado = true;

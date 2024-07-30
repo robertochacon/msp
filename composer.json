@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "nesbot/carbon": "^2.72",
+        "novadaemon/filament-pretty-json": "^2.2",
         "outerweb/filament-settings": "^1.2",
         "swisnl/filament-backgrounds": "^1.1"
     },

@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Get;
+use Novadaemon\FilamentPrettyJson\PrettyJson;
 
 class BitacoraResource extends Resource
 {
@@ -24,24 +25,29 @@ class BitacoraResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\TextInput::make('total_completados')
+                ->columnSpan(1),
+                Forms\Components\TextInput::make('total_fallidos')
+                ->columnSpan(1),
                 Forms\Components\TextInput::make('descripcion')
                     ->columnSpanFull()
                     ->required(),
-                Forms\Components\Repeater::make('codes')
-                    ->label('Registros')
-                    ->schema([
-                        Forms\Components\TextInput::make('codigo')->label("Mensaje"),
-                        Forms\Components\Toggle::make('estado')
-                        ->onColor('success')
-                        ->offColor('warning'),
-                        Forms\Components\Hidden::make('tipo'),
-                        Forms\Components\KeyValue::make('cambios')
-                        ->hidden(fn (Get $get): bool => $get('tipo') != 'client')
-                        // Forms\Components\MarkdownEditor::make('codigo')
-                    ])
-                    ->columnSpanFull()
-                    ->grid(1)
-            ]);
+                PrettyJson::make('codes')
+                    ->label('Detalles de la ejecucion:')
+                    ->columnSpanFull(),
+                // Forms\Components\Repeater::make('codes')
+                //     ->label('Registros')
+                //     ->schema([
+                //         Forms\Components\TextInput::make('codigo')->label("Mensaje"),
+                //         Forms\Components\Toggle::make('estado')
+                //         ->onColor('success')
+                //         ->offColor('warning'),
+                //         Forms\Components\Textarea::make('cambios')
+                //         ->json()
+                //     ])
+                //     ->columnSpanFull()
+                //     ->grid(1)
+            ])->columns(2);
     }
 
     public static function table(Table $table): Table
@@ -71,6 +77,7 @@ class BitacoraResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([

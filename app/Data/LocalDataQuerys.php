@@ -21,7 +21,7 @@ class LocalDataQuerys {
         return $this->connection->select("
             SELECT
                 c.cod_cliente AS id,
-                'X' + c.identificacion AS cedula,
+                c.identificacion AS cedula,
                 c.nombres AS nombre,
                 c.apellidos AS apellido,
                 c.fecha_nac AS fecha_n,
