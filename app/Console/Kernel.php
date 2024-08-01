@@ -35,22 +35,22 @@ class Kernel extends ConsoleKernel
                // Ejecutar el primer comando cada 10 minutos, entre 8 AM y 8 PM
                $schedule->command('app:data-clients')
                    ->weekdays()
-                   ->between('08:00', '20:00')
-                   ->hourly()
+                   ->between('07:00', '20:00')
+                   ->everyThreeHours()
                    ->name('data-clients');
 
                // Ejecutar el segundo comando 5 minutos después del primer comando
                $schedule->command('app:data-loans')
                    ->weekdays()
-                   ->between('08:05', '20:05')
-                   ->hourly()
+                   ->between('07:05', '20:05')
+                   ->everyThreeHours()
                    ->name('data-loans');
 
                // Ejecutar el tercer comando 5 minutos después del segundo comando
                $schedule->command('app:data-movements')
                    ->weekdays()
-                   ->between('08:10', '20:10')
-                   ->hourly()
+                   ->between('07:10', '20:10')
+                   ->everyThreeHours()
                    ->name('data-movements');
            }
            
