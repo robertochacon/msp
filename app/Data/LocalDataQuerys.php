@@ -89,6 +89,9 @@ class LocalDataQuerys {
 
     public function loans($num_credito){
 
+        $fecha_hoy = date('Y-m-d');
+        $fecha_manana = date('Y-m-d', strtotime('+1 day'));
+
         return $this->connection->selectOne("
             select
             c.cod_cliente as client_id,
@@ -107,14 +110,14 @@ class LocalDataQuerys {
             (select count(*) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito and p.estado = 'C') as cuotas_pagadas,
             periodo_pago as periodo_pago,
             isnull((select isnull(sum(isnull(p.capital,0) + isnull(p.interes,0) + isnull(p.comision,0) + isnull(p.mora,0)),0)
-                from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito and p.estado = 'P'),0) as saldo_pagar,
-            (select isnull(sum(isnull(p.capital,0)),0) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito and p.estado = 'P') as capital_no_vencido,
+                from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito and p.estado = 'P' and p.fecha_cuota < ?),0) as saldo_pagar,
+            (select isnull(sum(isnull(p.capital,0)),0) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito and p.estado = 'P' and p.fecha_cuota > ?) as capital_no_vencido,
             isnull((select Max(n.interes) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P' ),0) as interes_cuota,
             isnull((select Max(n.comision) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P'),0 ) as seguro_cuota,                                        
             c.destino_fondos as proposito
             from tbl_creditos c
             where fecha_aprobado is not null and num_credito = ?
-        ",[$num_credito]);
+        ",[$fecha_manana, $fecha_hoy, $num_credito]);
 
     }
 

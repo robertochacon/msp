@@ -31,6 +31,8 @@ class dataLoans extends Command
      */
     public function handle()
     {
+        set_time_limit(600);
+
         try {
 
             $ultimoRegistro = Bitacora::where('tipo', 'Credito')->where('estado', true)->latest()->first();

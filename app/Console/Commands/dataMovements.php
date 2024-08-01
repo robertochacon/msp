@@ -31,6 +31,8 @@ class dataMovements extends Command
      */
     public function handle()
     {
+        set_time_limit(600);
+
         try {
 
             $ultimoRegistro = Bitacora::where('tipo', 'Movimiento')->where('estado', true)->latest()->first();

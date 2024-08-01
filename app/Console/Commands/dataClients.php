@@ -32,6 +32,8 @@ class dataClients extends Command
      */
     public function handle()
     {
+        set_time_limit(600);
+
         try {
 
             $ultimoRegistro = Bitacora::where('tipo', 'Cliente')->where('estado', true)->latest()->first();
