@@ -79,7 +79,8 @@ class LocalDataQuerys {
                         FROM tbl_clientes e 
                         WHERE e.cod_cliente = c.cod_lugartrabajo), 'N') AS autorizar,
                 c.tipo_cuota AS tipo_cuota,
-                c.cod_frecuencia_pago_cuota AS cod_frecuencia_pago
+                c.cod_frecuencia_pago_cuota AS cod_frecuencia_pago,
+                isnull((select e.restringido from tbl_empleados e where e.cod_cliente = c.cod_ejecutivo),'N') AS restringido
             FROM tbl_clientes c 
             WHERE c.fecha_actualizacion > ?
             ORDER BY 1 DESC
@@ -99,8 +100,8 @@ class LocalDataQuerys {
             'RD$' as moneda,
             c.monto as monto_aprobado,
             c.monto as monto_desembolsado,
-            (c.monto - (select sum(p.capital) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito)) as monto_pagado,
-            (select Max(n.cuota) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P' ) as monto_cuota,
+            isnull((c.monto - (select sum(p.capital) from tbl_creditos_plan_pagos p where c.num_credito = p.no_credito)),0) as monto_pagado,
+            isnull((select Max(n.cuota) from tbl_Creditos_plan_pagos n where c.num_credito = n.no_credito and n.estado = 'P' ),0) as monto_cuota,
             c.estado as estado,
             c.fecha_aprobado as fecha_desembolso,
             (select Max(m.fecha) from tbl_Creditos_movimientos m where c.num_credito = m.no_credito and m.tipo_movi in (4, 5)) as fecha_ult_pago,
