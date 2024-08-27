@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             User::class,
             DefaultBitacora::class,
+            Settings::class,
         ]);
     }
 }

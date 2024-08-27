@@ -9,6 +9,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\Actions\ButtonAction;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\TimePicker;
  
 class Settings extends BaseSettings
 {
@@ -22,10 +24,18 @@ class Settings extends BaseSettings
                             Section::make('Configuracion del job')
                             ->description('Aqui puedes modificar los parametos y ejecucion del job para la carga automatica')
                             ->schema([
-                                TextInput::make('general.tiempo_de_ejecucion_del_job')
-                                    ->numeric()
-                                    ->required(),
-                                Toggle::make('general.estado_del_job'),
+                                Fieldset::make('Rango de horas para ejecutar el job')
+                                ->schema([
+                                    TimePicker::make('hora_inicio')
+                                    ->prefixIcon('heroicon-m-check-circle')
+                                    ->prefixIconColor('success')
+                                    ->label('Hora de inicio'),
+                                    TimePicker::make('hora_fin')
+                                    ->prefixIcon('heroicon-m-check-circle')
+                                    ->prefixIconColor('success')
+                                    ->label('Hora final'),
+                                ])
+                                ->columns(2)
                             ]),
                         ]),
                 ]),

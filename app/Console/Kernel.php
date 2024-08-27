@@ -5,6 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Models\Settings;
+use Carbon\Carbon;
 
 class Kernel extends ConsoleKernel
 {
@@ -13,49 +14,42 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        // Definir el rango horario
         $settings = Settings::get();
 
-        // if ($settings[0]["value"]) {
-            
+        $start = trim($settings[0]["value"], '"');
+        $timeStart = Carbon::parse($start) ?? Carbon::parse("06:00");
+
+        $end = trim($settings[1]["value"], '"');
+        $timeEnd = Carbon::parse($end) ?? Carbon::parse("21:00");
+
             // $schedule->command('app:data-clients')->dailyAt('6:20');
             // $schedule->command('app:data-loans')->dailyAt('6:25');
             // $schedule->command('app:data-movements')->dailyAt('6:30');
 
-           
-           // Definir el rango horario
-           $start = '08:00';
-           $end = '20:00';
-           $interval = 5; // Intervalo en minutos
-
-           // Hora actual
            $now = now();
 
-           // Verificar si estamos en el rango horario
-           if ($now->between($start, $end)) {
-               // Ejecutar el primer comando cada 10 minutos, entre 8 AM y 8 PM
+           if ($now->between($timeStart, $timeEnd)) {
+
                $schedule->command('app:data-clients')
                    ->weekdays()
-                   ->between('06:00', '21:00')
+                   ->between($timeStart, $timeEnd)
                    ->everyThreeHours($minutes = 0)
                    ->name('data-clients');
 
-               // Ejecutar el segundo comando 5 minutos después del primer comando
                $schedule->command('app:data-loans')
                    ->weekdays()
-                   ->between('06:05', '21:05')
+                   ->between($this->addMinutes($timeStart, 5), $this->addMinutes($timeEnd, 5))
                    ->everyThreeHours($minutes = 0)
                    ->name('data-loans');
 
-               // Ejecutar el tercer comando 5 minutos después del segundo comando
                $schedule->command('app:data-movements')
                    ->weekdays()
-                   ->between('06:10', '21:10')
+                   ->between($this->addMinutes($timeStart, 10), $this->addMinutes($timeEnd, 10))
                    ->everyThreeHours($minutes = 0)
                    ->name('data-movements');
            }
            
-        // }
-
     }
 
     /**
@@ -67,4 +61,12 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+    protected function addMinutes($time, $minutes){
+        $time = Carbon::createFromFormat('H:i', $time);
+        $time->addMinutes($minutes);
+        $updatedTime = $time->format('H:i');
+        return $updateTime;
+    }
+
 }

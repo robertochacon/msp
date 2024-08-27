@@ -12,7 +12,7 @@ class Settings extends Model
     protected $table = 'settings';
     
     protected $fillable = [
-        'estado_del_job','tiempo_de_ejecucion_del_job'
+        'hora_inicio','hora_fin',
     ];
 
 }
