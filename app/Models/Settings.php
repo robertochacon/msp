@@ -12,7 +12,7 @@ class Settings extends Model
     protected $table = 'settings';
     
     protected $fillable = [
-        'hora_inicio','hora_fin',
+        'hora_inicio','hora_fin','intervalo_tiempo'
     ];
 
 }

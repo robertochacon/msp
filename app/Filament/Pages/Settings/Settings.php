@@ -11,6 +11,7 @@ use Filament\Pages\Actions\ButtonAction;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Components\Select;
  
 class Settings extends BaseSettings
 {
@@ -34,6 +35,22 @@ class Settings extends BaseSettings
                                     ->prefixIcon('heroicon-m-check-circle')
                                     ->prefixIconColor('success')
                                     ->label('Hora final'),
+                                ])
+                                ->columns(2),
+                                Fieldset::make('Intervalo de tiempo')
+                                ->schema([
+                                    Select::make('intervalo_tiempo')
+                                    ->options([
+                                        'everyFifteenMinutes' => 'Cada 15 Minutos',
+                                        'everyThirtyMinutes' => 'Cada 30 Minutos',
+                                        'hourly' => 'Cada Hora',
+                                        'everyTwoHours' => 'Cada 2 Horas',
+                                        'everyThreeHours' => 'Cada 3 Horas',
+                                        'everyFourHours' => 'Cada 4 Horas',
+                                        'everySixHours' => 'Cada 6 Horas',
+                                    ])
+                                    ->label('Seleccione una opcion')
+                                    ->searchable()
                                 ])
                                 ->columns(2)
                             ]),

@@ -26,5 +26,13 @@ class Settings extends Seeder
             'created_at' => date("Y-m-d")." 00:00:00",
             'updated_at' => date("Y-m-d")." 00:00:00"
         ]);
+
+        ModelsSettings::create([
+            'key' => 'intervalo_tiempo',
+            'value' => '"everyTwoHours"',
+            'created_at' => date("Y-m-d")." 00:00:00",
+            'updated_at' => date("Y-m-d")." 00:00:00"
+        ]);
+
     }
 }

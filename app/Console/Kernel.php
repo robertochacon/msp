@@ -23,6 +23,8 @@ class Kernel extends ConsoleKernel
         $end = trim($settings[1]["value"], '"');
         $timeEnd = Carbon::parse($end) ?? Carbon::parse("21:00");
 
+        $interval = trim($settings[2]["value"], '"') ?? 'hourly';
+
             // $schedule->command('app:data-clients')->dailyAt('6:20');
             // $schedule->command('app:data-loans')->dailyAt('6:25');
             // $schedule->command('app:data-movements')->dailyAt('6:30');
@@ -31,23 +33,65 @@ class Kernel extends ConsoleKernel
 
            if ($now->between($timeStart, $timeEnd)) {
 
-               $schedule->command('app:data-clients')
+               $clients = $schedule->command('app:data-clients')
                    ->weekdays()
                    ->between($timeStart, $timeEnd)
-                   ->everyThreeHours($minutes = 0)
                    ->name('data-clients');
-
-               $schedule->command('app:data-loans')
+                   
+               $loans = $schedule->command('app:data-loans')
                    ->weekdays()
                    ->between($this->addMinutes($timeStart, 5), $this->addMinutes($timeEnd, 5))
-                   ->everyThreeHours($minutes = 0)
                    ->name('data-loans');
 
-               $schedule->command('app:data-movements')
+               $movements = $schedule->command('app:data-movements')
                    ->weekdays()
                    ->between($this->addMinutes($timeStart, 10), $this->addMinutes($timeEnd, 10))
-                   ->everyThreeHours($minutes = 0)
                    ->name('data-movements');
+
+                if ($interval == 'everyFifteenMinutes') {
+                    
+                    $clients->everyFifteenMinutes();
+                    $loans->everyFifteenMinutes();
+                    $movements->everyFifteenMinutes();
+
+                }else if ($interval == 'everyThirtyMinutes') {
+                    
+                    $clients->everyFifteenMinutes();
+                    $loans->everyFifteenMinutes();
+                    $movements->everyFifteenMinutes();
+
+                }else if ($interval == 'hourly') {
+
+                    $clients->hourly();
+                    $loans->hourly();
+                    $movements->hourly();
+                    
+                }else if ($interval == 'everyTwoHours') {
+
+                    $clients->everyTwoHours($minutes = 0);
+                    $loans->everyTwoHours($minutes = 0);
+                    $movements->everyTwoHours($minutes = 0);
+                    
+                }else if ($interval == 'everyThreeHours') {
+
+                    $clients->everyThreeHours($minutes = 0);
+                    $loans->everyThreeHours($minutes = 0);
+                    $movements->everyThreeHours($minutes = 0);
+                    
+                }else if ($interval == 'everyFourHours') {
+
+                    $clients->everyFourHours($minutes = 0);
+                    $loans->everyFourHours($minutes = 0);
+                    $movements->everyFourHours($minutes = 0);
+                    
+                }else if ($interval == 'everySixHours') {
+
+                    $clients->everySixHours($minutes = 0);
+                    $loans->everySixHours($minutes = 0);
+                    $movements->everySixHours($minutes = 0);
+                    
+                }
+
            }
            
     }
@@ -63,10 +107,12 @@ class Kernel extends ConsoleKernel
     }
 
     protected function addMinutes($time, $minutes){
-        $time = Carbon::createFromFormat('H:i', $time);
+        if (!($time instanceof Carbon)) {
+            $time = Carbon::createFromFormat('H:i', $time);
+        }
         $time->addMinutes($minutes);
         $updatedTime = $time->format('H:i');
-        return $updateTime;
+        return $updatedTime;
     }
 
 }
