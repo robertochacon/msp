@@ -34,17 +34,17 @@ class Kernel extends ConsoleKernel
            if ($now->between($timeStart, $timeEnd)) {
 
                $clients = $schedule->command('app:data-clients')
-                   ->weekdays()
+                   ->days([1, 2, 3, 4, 5, 6])
                    ->between($timeStart, $timeEnd)
                    ->name('data-clients');
                    
                $loans = $schedule->command('app:data-loans')
-                   ->weekdays()
+                   ->days([1, 2, 3, 4, 5, 6])
                    ->between($this->addMinutes($timeStart, 5), $this->addMinutes($timeEnd, 5))
                    ->name('data-loans');
 
                $movements = $schedule->command('app:data-movements')
-                   ->weekdays()
+                   ->days([1, 2, 3, 4, 5, 6])
                    ->between($this->addMinutes($timeStart, 10), $this->addMinutes($timeEnd, 10))
                    ->name('data-movements');
 
